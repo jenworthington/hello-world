@@ -15,12 +15,14 @@ Before you install Splunk Connect for Docker, make sure your system meets the fo
 * Configure an HEC token on Splunk Enterprise or Splunk Light (either single instance or distributed environment). Refer to the set up and use HTTP Event Collector documentation for more details.
 * Operating System Platform support as defined in Docker Engine managed plugin system documentation.
 
-# Step 1: Get an HTTP Event Collector token
+# Install and configure Splunk Connect for Docker
+
+## Step 1: Get an HTTP Event Collector token
 You must configure the Splunk HTTP Event Collector (HEC) to send your Docker container logging data to Splunk Enterprise or Splunk Cloud. HEC uses tokens as an alternative to embedding Splunk Enterprise or Splunk Cloud credentials in your app or supporting files. For more about how the HTTP event collector works, see http://docs.splunk.com/Documentation/Splunk/7.0.3/Data/UsetheHTTPEventCollector
 
 1. Enable your HTTP Event collector:
 http://docs.splunk.com/Documentation/Splunk/7.0.3/Data/HECWalkthrough#Enable_HEC
-1. Create an HEC token:
+2. Create an HEC token:
 http://docs.splunk.com/Documentation/Splunk/7.0.3/Data/UsetheHTTPEventCollector
 http://docs.splunk.com/Documentation/Splunk/7.0.3/Data/UseHECusingconffiles
 
@@ -30,10 +32,10 @@ Note the following when you generate your token:
 * Do not generate your token using the default TLS cert provided by Splunk. For information about configuring Splunk to use self-signed or third-party certs, see http://docs.splunk.com/Documentation/Splunk/7.0.3/Security/AboutsecuringyourSplunkconfigurationwithSSL.
 * Splunk Cloud customers must file a support request in order to have a token generated.
 
-# Step 2: Install the plugin 
+## Step 2: Install the plugin 
 There are multiple ways to install Splunk Connect for Docker, Splunk recommends installing from Docker Store (option 1) to ensure the most current and stable build.
 
-## Install the Plugin from Docker Store
+### Install the Plugin from Docker Store
 
 1. Create the plugin from the package.
 
@@ -43,7 +45,7 @@ There are multiple ways to install Splunk Connect for Docker, Splunk recommends 
 
 	$ docker plugin enable splunk-logging-plugin:latest
 
-## Install the plugin from the tar file 
+### Install the plugin from the tar file 
 
 1. Clone the repository and check out release branch
 
@@ -72,7 +74,7 @@ There are multiple ways to install Splunk Connect for Docker, Splunk recommends 
 
 	$ docker plugin enable splunk-logging-plugin:latest
 
-# Run containers with the plugin installed
+## Step 3: Run containers with the plugin installed
 
 Splunk Connect for Docker continually listens for logs, but your containers must also be running so that the container logs are forwarded to Splunk Connect for Docker. The following examples describe how to configure containers to run with Splunk Connect for Docker. 
 
@@ -98,14 +100,14 @@ This sample command configures Splunk Connect for Docker for a single container.
 
 	$ docker run --log-driver=splunk-logging-plugin --log-opt splunk-url=<splunk_hec_endpoint> --log-opt splunk-token=<splunk-hec_token> --log-opt splunk-insecureskipverify=true -d <docker_image>
 
-# Configuration variables
+## Step 4: Set Configuration variables
 
 Use the configuration variables to configure the behaviors and rules for Splunk Connect for Docker. For example you can confiugre your certificate security or how messages are formatted and distributed. Note the following:
 
 * Configurations that pass though docker <addr>run --log-opt <opt><addr> are effective instantaneously. 
 * You must restart the Docker engine after configuring through `<addr>`daemon.json`<addr>` 
 	
-## How to use the variables
+### How to use the variables
 
 The following is an example of the logging options specified for the Splunk Enterprise instance. In this example:
 
@@ -123,7 +125,7 @@ The path to the root certificate and Common Name is specified using an HTTPS sch
 	--label location=west \
 	<docker_image>
 
-## Required Variables
+### Required Variables
 
 Variable | Description 
 ------------ | -------------	
@@ -131,7 +133,7 @@ splunk-token | Splunk HTTP Event Collector token.
 splunk-url | Path to your Splunk Enterprise, self-service Splunk Cloud instance, or Splunk Cloud managed cluster (including port and scheme used by HTTP Event Collector) in one of the following formats: https://your_splunk_instance:8088 or https://input-prd-p-XXXXXXX.cloud.splunk.com:8088 or https://http-inputs-XXXXXXXX.splunkcloud.com
 
 
-## Optional Variables
+### Optional Variables
 
 Variable | Description | Default
 ------------ | ------------- | -------------
@@ -151,7 +153,7 @@ env | Comma-separated list of keys of environment variables to be included in me
 env-regex | A regular expression to match logging-related environment variables. Used for advanced log tag options. If there is collision between the label and env keys, the value of the env takes precedence. Both options add additional fields to the attributes of a logging message. | 	
 
 
-## Advanced options - Environment Variables
+### Advanced options - Environment Variables
 
 Variable | Description | Default
 ------------ | ------------- | -------------
@@ -163,7 +165,7 @@ SPLUNK_LOGGING_DRIVER_TEMP_MESSAGES_HOLD_DURATION | Appends logs that are chunke
 SPLUNK_LOGGING_DRIVER_TEMP_MESSAGES_BUFFER_SIZE	| Appends logs that are chunked by docker with 16kb limit. It specifies the biggest message that the system can reassemble. The value provided here should be smaller than or equal to the Splunk HEC limit. 1 MB is the default HEC setting. | 1mb
 
 
-## Message formats
+### Message formats
 There are three logging plug-in messaging formats set under the optional variable splunk-format:
 
 * inline (this is the default format) 
