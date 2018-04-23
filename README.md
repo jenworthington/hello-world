@@ -110,6 +110,7 @@ Use the configuration variables to configure the behaviors and rules for Splunk 
 The following is an example of the logging options specified for the Splunk Enterprise instance. In this example:
 
 The path to the root certificate and Common Name is specified using an HTTPS scheme to be used for verification. 
+
 	$ docker run --log-driver=splunk-logging-plugin\
 	--log-opt splunk-token=176FCEBF-4CF5-4EDF-91BC-703796522D20 \
 	--log-opt splunk-url=https://splunkhost:8088 \
@@ -124,40 +125,42 @@ The path to the root certificate and Common Name is specified using an HTTPS sch
 
 ## Required Variables
 
-splunk-token	Splunk HTTP Event Collector token.
-splunk-url 	Path to your Splunk Enterprise, self-service Splunk Cloud instance, or Splunk Cloud managed cluster (including port and scheme used by HTTP Event Collector) in one of the following formats: https://your_splunk_instance:8088 or https://input-prd-p-XXXXXXX.cloud.splunk.com:8088 or https://http-inputs-XXXXXXXX.splunkcloud.com
+Variable | Description 
+------------ | -------------	
+splunk-token | Splunk HTTP Event Collector token.
+splunk-url | Path to your Splunk Enterprise, self-service Splunk Cloud instance, or Splunk Cloud managed cluster (including port and scheme used by HTTP Event Collector) in one of the following formats: https://your_splunk_instance:8088 or https://input-prd-p-XXXXXXX.cloud.splunk.com:8088 or https://http-inputs-XXXXXXXX.splunkcloud.com
 
 
 ## Optional Variables
 
-Variable	Description	Default
-splunk-source	Event source.	
-splunk-sourcetype 	
-Event source type.	
-splunk-index	Event index. (Note that HEC token must be configured to accept the specified index)	
-splunk-capath	Path to root certificate. (Must be specified if splunk-insecureskipverify is false)	
-splunk-caname	Name to use for validating server certificate; by default the hostname of the splunk-url is used.	
-splunk-insecureskipverify	"false" means that the service certificates are validated and "true" means that server certificates are not validated.	false
-splunk-format	Message format. Values can be inline, json, or raw. For more infomation about formats see the Messageformats option.	inline
-splunk-verify-connection	Upon plug-in startup, verify that Splunk Connect for Docker can connect to Splunk HEC endpoint. False indicates that Splunk Connect for Docker will start up and continue to try to connect to HEC and will push logs to buffer until connection has been establised. Logs will roll off buffer once buffer is full. True indicates that Splunk Connect for Docker will not start up if connection to HEC cannot be established.	false
-splunk-gzip	Enable/disable gzip compression to send events to Splunk Enterprise or Splunk Cloud instance.	false
-splunk-gzip-level	Set compression level for gzip. Valid values are -1 (default), 0 (no compression), 1 (best speed) … 9 (best compression).	DefaultCompression
-tag	Specify tag for message, which interpret some markup. Default value is {{.ID}} (12 characters of the container ID). Refer to the log tag option documentation for customizing the log tag format. https://docs.docker.com/v17.09/engine/admin/logging/log_tags/	
-labels	Comma-separated list of keys of labels, which should be included in message, if these labels are specified for container.	
-env	Comma-separated list of keys of environment variables to be included in message if they specified for a container.	
-env-regex	A regular expression to match logging-related environment variables. Used for advanced log tag options. If there is collision between the label and env keys, the value of the env takes precedence. Both options add additional fields to the attributes of a logging message.	
+Variable | Description | Default
+------------ | ------------- | -------------
+splunk-source | Event source |	
+splunk-sourcetype  | Event source type | 
+splunk-index | Event index. (Note that HEC token must be configured to accept the specified index) | 	
+splunk-capath | Path to root certificate. (Must be specified if splunk-insecureskipverify is false) | 
+splunk-caname | Name to use for validating server certificate; by default the hostname of the splunk-url is used. | 	
+splunk-insecureskipverify| "false" means that the service certificates are validated and "true" means that server certificates are not validated. | false
+splunk-format | Message format. Values can be inline, json, or raw. For more infomation about formats see the Messageformats option. | inline
+splunk-verify-connection| Upon plug-in startup, verify that Splunk Connect for Docker can connect to Splunk HEC endpoint. False indicates that Splunk Connect for Docker will start up and continue to try to connect to HEC and will push logs to buffer until connection has been establised. Logs will roll off buffer once buffer is full. True indicates that Splunk Connect for Docker will not start up if connection to HEC cannot be established. | false
+splunk-gzip | Enable/disable gzip compression to send events to Splunk Enterprise or Splunk Cloud instance. | false
+splunk-gzip-level | Set compression level for gzip. Valid values are -1 (default), 0 (no compression), 1 (best speed) … 9 (best compression). | DefaultCompression
+tag | Specify tag for message, which interpret some markup. Default value is {{.ID}} (12 characters of the container ID). Refer to the log tag option documentation for customizing the log tag format. https://docs.docker.com/v17.09/engine/admin/logging/log_tags/	| 
+labels | Comma-separated list of keys of labels, which should be included in message, if these labels are specified for container. | 	
+env | Comma-separated list of keys of environment variables to be included in message if they specified for a container. | 	
+env-regex | A regular expression to match logging-related environment variables. Used for advanced log tag options. If there is collision between the label and env keys, the value of the env takes precedence. Both options add additional fields to the attributes of a logging message. | 	
 
 
 ## Advanced options - Environment Variables
 
-SPLUNK_LOGGING_DRIVER_POST_MESSAGES_FREQUENCY	 5s	How often plug-in posts messages when there is nothing to batch, i.e., the maximum time to wait for more messages to batch. The internal buffer used for batching is flushed either:
-When the buffer is full (the disgnated batch size is reached)
-The buffer timesout (specified by this frequency)
-SPLUNK_LOGGING_DRIVER_POST_MESSAGES_BATCH_SIZE 	1000	The number of messages the plug-in should collect before sending them in one batch.
-SPLUNK_LOGGING_DRIVER_BUFFER_MAX	 10 * 1000	The maximum amount of messages to hold in buffer and retry when the plug-in cannot connect to remote server.
-SPLUNK_LOGGING_DRIVER_CHANNEL_SIZE	 4 * 1000	How many pending messages can be in the channel used to send messages to background logger worker, which batches them.
-SPLUNK_LOGGING_DRIVER_TEMP_MESSAGES_HOLD_DURATION	100ms 	Appends logs that are chunked by docker with 16kb limit. It specifies how long the system can wait for the next message to come.
-SPLUNK_LOGGING_DRIVER_TEMP_MESSAGES_BUFFER_SIZE	1mb	Appends logs that are chunked by docker with 16kb limit. It specifies the biggest message that the system can reassemble. The value provided here should be smaller than or equal to the Splunk HEC limit. 1 MB is the default HEC setting. 
+Variable | Description | Default
+------------ | ------------- | -------------
+SPLUNK_LOGGING_DRIVER_POST_MESSAGES_FREQUENCY | How often plug-in posts messages when there is nothing to batch, i.e., the maximum time to wait for more messages to batch. The internal buffer used for batching is flushed either when the buffer is full (the disgnated batch size is reached) or the buffer timesout (specified by this frequency) | | 5s
+SPLUNK_LOGGING_DRIVER_POST_MESSAGES_BATCH_SIZE | The number of messages the plug-in should collect before sending them in one batch. | 	1000	
+SPLUNK_LOGGING_DRIVER_BUFFER_MAX | The maximum amount of messages to hold in buffer and retry when the plug-in cannot connect to remote server. |  10 * 1000
+SPLUNK_LOGGING_DRIVER_CHANNEL_SIZE | How many pending messages can be in the channel used to send messages to background logger worker, which batches them. | 4 * 1000
+SPLUNK_LOGGING_DRIVER_TEMP_MESSAGES_HOLD_DURATION | Appends logs that are chunked by docker with 16kb limit. It specifies how long the system can wait for the next message to come. | 100ms 
+SPLUNK_LOGGING_DRIVER_TEMP_MESSAGES_BUFFER_SIZE	| Appends logs that are chunked by docker with 16kb limit. It specifies the biggest message that the system can reassemble. The value provided here should be smaller than or equal to the Splunk HEC limit. 1 MB is the default HEC setting. | 1mb
 
 
 ## Message formats
@@ -239,7 +242,8 @@ Check HEC endpoint accessibility Docker environment. If the endpoint cannot be r
 
 If you are using an Indexer Cluster, the current plugin accepts a single splunk-url value. We recommend that you configure a load balancer in front of your Indexer tier. Make sure the load balancer can successfully tunnel the HEC requests to the indexer tier. If HEC is configured in an Indexer Cluster environment, all indexers should have same HEC token configured. See http://docs.splunk.com/Documentation/Splunk/7.0.3/Data/UsetheHTTPEventCollector.  
 
-Check your heavy forwarder connection
+## Check your heavy forwarder connection
+
 If you ae using a heavy forwarder to preprocess the events (e.g: funnel multiple log lines to a single event), make sure that the heavy forwarder is properly connecting to the indexers. To troubleshoot the forwarder and receiver connection, see: https://docs.splunk.com/Documentation/SplunkCloud/7.0.0/Forwarding/Receiverconnection. 
 
 ## Check the plugin's debug log in docker
@@ -249,10 +253,7 @@ Stdout of a plugin is redirected to Docker logs. Such entries have a plugin=<ID>
 To find out the plugin ID of Splunk Connect for Docker, use the command below and look for Splunk Logging Plugin entry.
 
 	# list all the plugins
-
 	$ docker plugin ls
-
-
 
 Depending on your system, location of Docker daemon logging may vary.  Refer to Docker documentation for Docker daemon log location for your specific platform. Here are a few examples:
 
